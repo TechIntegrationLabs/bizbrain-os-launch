@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>Smart Model Routing - BizBrain OS v3.0.2</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px;
+    height: 630px;
+    background: #0a0a0f;
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    overflow: hidden;
+    position: relative;
+  }
+  .container {
+    width: 1200px;
+    height: 630px;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 50px 24px;
+    position: relative;
+  }
+  /* Background */
+  .container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 50%, rgba(0, 212, 255, 0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 75% 50%, rgba(255, 215, 0, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 1;
+  }
+  .title {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .title span { color: #FFD700; }
+  .subtitle {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.35);
+    margin-top: 4px;
+  }
+  .routing-area {
+    display: flex;
+    gap: 40px;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    align-items: flex-start;
+  }
+  /* Task list (left) */
+  .tasks-column {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .col-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.25);
+    margin-bottom: 6px;
+    padding-left: 4px;
+  }
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    position: relative;
+  }
+  .task-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-cyan { background: #00D4FF; }
+  .dot-gold { background: #FFD700; }
+  /* Flow arrows (center) */
+  .flow-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    position: relative;
+    padding-top: 30px;
+  }
+  .flow-arrow {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.12);
+    margin: 6px 0;
+  }
+  .flow-label {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  /* Model tiers (right) */
+  .tiers-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .tier {
+    padding: 20px 24px;
+    border-radius: 14px;
+    position: relative;
+  }
+  .tier-haiku {
+    background: rgba(0, 212, 255, 0.03);
+    border: 1.5px solid rgba(0, 212, 255, 0.15);
+  }
+  .tier-sonnet {
+    background: rgba(255, 215, 0, 0.03);
+    border: 1.5px solid rgba(255, 215, 0, 0.15);
+  }
+  .tier-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .tier-name {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .tier-haiku .tier-name { color: #00D4FF; }
+  .tier-sonnet .tier-name { color: #FFD700; }
+  .tier-badge {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .badge-fast {
+    background: rgba(0, 212, 255, 0.1);
+    color: #00D4FF;
+    border: 1px solid rgba(0, 212, 255, 0.2);
+  }
+  .badge-complex {
+    background: rgba(255, 215, 0, 0.1);
+    color: #FFD700;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+  }
+  .tier-tasks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tier-task {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Consolas', 'Courier New', monospace;
+  }
+  .tier-haiku .tier-task {
+    background: rgba(0, 212, 255, 0.06);
+    color: rgba(0, 212, 255, 0.7);
+    border: 1px solid rgba(0, 212, 255, 0.1);
+  }
+  .tier-sonnet .tier-task {
+    background: rgba(255, 215, 0, 0.06);
+    color: rgba(255, 215, 0, 0.7);
+    border: 1px solid rgba(255, 215, 0, 0.1);
+  }
+  .tier-desc {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.3);
+    margin-top: 8px;
+  }
+  /* Savings callout */
+  .savings {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 28px;
+    border-radius: 50px;
+    background: rgba(68, 255, 136, 0.04);
+    border: 1px solid rgba(68, 255, 136, 0.15);
+    z-index: 2;
+  }
+  .savings-percent {
+    font-size: 24px;
+    font-weight: 800;
+    color: #44FF88;
+  }
+  .savings-text {
+    font-size: 13px;
+    color: rgba(68, 255, 136, 0.6);
+    font-weight: 500;
+  }
+  .version {
+    position: absolute;
+    bottom: 16px;
+    left: 50px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.15);
+    letter-spacing: 2px;
+    z-index: 1;
+  }
+  .branding {
+    position: absolute;
+    bottom: 16px;
+    right: 50px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.15);
+    letter-spacing: 2px;
+    z-index: 1;
+  }
+  /* Connection lines from tasks to tiers */
+  .connections {
+    position: absolute;
+    left: 345px;
+    top: 100px;
+    width: 120px;
+    height: 400px;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .conn-line {
+    position: absolute;
+    height: 1px;
+    left: 0;
+    right: 0;
+  }
+  .conn-cyan { background: linear-gradient(90deg, rgba(0,212,255,0.15), rgba(0,212,255,0.05)); }
+  .conn-gold { background: linear-gradient(90deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05)); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="title">Smart Model <span>Routing</span></div>
+    <div class="subtitle">Right model for every task &mdash; automatic cost optimization</div>
+  </div>
+
+  <div class="routing-area">
+    <!-- Tasks column -->
+    <div class="tasks-column">
+      <div class="col-label">Task Types</div>
+
+      <div class="task-item">
+        <span class="task-dot dot-cyan"></span>
+        Entity detection
+      </div>
+      <div class="task-item">
+        <span class="task-dot dot-cyan"></span>
+        Decision logging
+      </div>
+      <div class="task-item">
+        <span class="task-dot dot-cyan"></span>
+        Project onboarding
+      </div>
+      <div class="task-item">
+        <span class="task-dot dot-cyan"></span>
+        Session summary
+      </div>
+      <div class="task-item">
+        <span class="task-dot dot-cyan"></span>
+        Conflict resolution
+      </div>
+      <div class="task-item">
+        <span class="task-dot dot-gold"></span>
+        Brain access
+      </div>
+      <div class="task-item">
+        <span class="task-dot dot-gold"></span>
+        Complex operations
+      </div>
+    </div>
+
+    <!-- Flow indicator -->
+    <div class="flow-center">
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-arrow">&rarr;</div>
+      <span class="flow-label">ROUTES TO</span>
+    </div>
+
+    <!-- Tiers column -->
+    <div class="tiers-column">
+      <div class="col-label">Model Tiers</div>
+
+      <div class="tier tier-haiku">
+        <div class="tier-header">
+          <div class="tier-name">HAIKU</div>
+          <span class="tier-badge badge-fast">Fast &bull; Low Cost</span>
+        </div>
+        <div class="tier-tasks">
+          <span class="tier-task">entity:detect</span>
+          <span class="tier-task">decision:log</span>
+          <span class="tier-task">project:onboard</span>
+          <span class="tier-task">session:summarize</span>
+          <span class="tier-task">conflict:resolve</span>
+        </div>
+        <div class="tier-desc">Lightweight operations that don't need deep reasoning</div>
+      </div>
+
+      <div class="tier tier-sonnet">
+        <div class="tier-header">
+          <div class="tier-name">SONNET</div>
+          <span class="tier-badge badge-complex">Complex &bull; Deep</span>
+        </div>
+        <div class="tier-tasks">
+          <span class="tier-task">brain:read</span>
+          <span class="tier-task">brain:write</span>
+          <span class="tier-task">complex:operation</span>
+        </div>
+        <div class="tier-desc">Operations requiring deep context and multi-step reasoning</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Savings callout -->
+  <div class="savings">
+    <span class="savings-percent">40-60%</span>
+    <span class="savings-text">cost savings with smart routing</span>
+  </div>
+
+  <div class="version">v3.0.2</div>
+  <div class="branding">BIZBRAIN OS</div>
+</div>
+</body>
+</html>

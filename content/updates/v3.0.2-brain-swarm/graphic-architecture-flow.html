@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>Brain Swarm Architecture</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px;
+    height: 630px;
+    background: #0a0a0f;
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    overflow: hidden;
+    position: relative;
+  }
+  .container {
+    width: 1200px;
+    height: 630px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 40px 20px;
+    position: relative;
+  }
+  /* Subtle grid background */
+  .container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .title {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 1;
+  }
+  .title span { color: #FFD700; }
+  .subtitle {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
+  }
+  .flow-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+  }
+  /* Row layouts */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+  }
+  /* Node styles */
+  .node {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    position: relative;
+    white-space: nowrap;
+  }
+  .node-user {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    font-size: 15px;
+    padding: 14px 32px;
+  }
+  .node-hook {
+    background: rgba(0, 212, 255, 0.08);
+    border: 1.5px solid rgba(0, 212, 255, 0.3);
+    color: #00D4FF;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+  }
+  .node-orchestrator {
+    background: rgba(255, 215, 0, 0.1);
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    color: #FFD700;
+    font-size: 16px;
+    padding: 16px 36px;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
+  }
+  .node-agent {
+    background: rgba(0, 212, 255, 0.06);
+    border: 1.5px solid rgba(0, 212, 255, 0.3);
+    color: #00D4FF;
+    padding: 12px 20px;
+    flex: 1;
+    max-width: 200px;
+    text-align: center;
+  }
+  .node-stage {
+    background: rgba(68, 255, 136, 0.06);
+    border: 1.5px solid rgba(68, 255, 136, 0.3);
+    color: #44FF88;
+  }
+  .node-brain {
+    background: rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    color: #FFD700;
+    font-size: 16px;
+    padding: 14px 40px;
+    border-radius: 50px;
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.1);
+  }
+  /* Arrow connector */
+  .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    color: rgba(255, 255, 255, 0.2);
+    font-size: 18px;
+    line-height: 1;
+  }
+  .arrow-down::after {
+    content: '\25BC';
+    display: block;
+    font-size: 12px;
+  }
+  .arrow-line {
+    width: 1.5px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.15);
+  }
+  .arrow-gold { color: rgba(255, 215, 0, 0.4); }
+  .arrow-gold .arrow-line { background: rgba(255, 215, 0, 0.25); }
+  .arrow-green { color: rgba(68, 255, 136, 0.4); }
+  .arrow-green .arrow-line { background: rgba(68, 255, 136, 0.25); }
+  /* Event queue sidebar */
+  .event-queue {
+    position: absolute;
+    right: 50px;
+    top: 120px;
+    width: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .eq-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 6px;
+    text-align: center;
+  }
+  .eq-item {
+    background: rgba(0, 212, 255, 0.04);
+    border: 1px solid rgba(0, 212, 255, 0.12);
+    border-radius: 5px;
+    padding: 6px 10px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 10px;
+    color: rgba(0, 212, 255, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .eq-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #00D4FF;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+  /* Feed line from queue to orchestrator */
+  .feed-line {
+    position: absolute;
+    right: 230px;
+    top: 255px;
+    width: 80px;
+    height: 1.5px;
+    background: linear-gradient(90deg, rgba(0, 212, 255, 0.3), transparent);
+  }
+  .feed-arrow {
+    position: absolute;
+    right: 224px;
+    top: 250px;
+    color: rgba(0, 212, 255, 0.3);
+    font-size: 11px;
+  }
+  /* Agent spread lines */
+  .spread-container {
+    position: relative;
+    width: 600px;
+    height: 10px;
+  }
+  .spread-line-left,
+  .spread-line-center,
+  .spread-line-right {
+    position: absolute;
+    top: 0;
+    width: 1.5px;
+    height: 10px;
+    background: rgba(0, 212, 255, 0.15);
+  }
+  .spread-line-left { left: 100px; }
+  .spread-line-center { left: 50%; transform: translateX(-50%); }
+  .spread-line-right { right: 100px; }
+  /* Version badge */
+  .version {
+    position: absolute;
+    bottom: 16px;
+    left: 40px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 2px;
+  }
+  .branding {
+    position: absolute;
+    bottom: 16px;
+    right: 40px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 2px;
+  }
+  /* Node label */
+  .node-label {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .agents-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
+    width: 600px;
+  }
+  .agent-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Brain Swarm <span>Architecture</span></div>
+  <div class="subtitle">BizBrain OS v3.0.2 &mdash; Event-Driven Agent Orchestration</div>
+
+  <div class="flow-area">
+    <!-- User -->
+    <div class="flow-row">
+      <div class="node node-user">User Interaction</div>
+    </div>
+
+    <div class="arrow arrow-down"><div class="arrow-line"></div></div>
+
+    <!-- SessionStart Hook -->
+    <div class="flow-row">
+      <div class="node node-hook">SessionStart Hook</div>
+    </div>
+
+    <div class="arrow arrow-down arrow-gold"><div class="arrow-line"></div></div>
+
+    <!-- Orchestrator -->
+    <div class="flow-row">
+      <div class="node node-orchestrator">Orchestrator</div>
+    </div>
+
+    <div class="arrow arrow-down" style="height: 10px;"><div class="arrow-line"></div></div>
+
+    <!-- Agent fan-out -->
+    <div class="agents-row">
+      <div class="agent-col">
+        <div class="node-label">Monitor</div>
+        <div class="node node-agent">Entity Watchdog</div>
+      </div>
+      <div class="agent-col">
+        <div class="node-label">Adapt</div>
+        <div class="node node-agent">Brain Learner</div>
+      </div>
+      <div class="agent-col">
+        <div class="node-label">Access</div>
+        <div class="node node-agent">Brain Gateway</div>
+      </div>
+    </div>
+
+    <div class="arrow arrow-down arrow-green"><div class="arrow-line"></div></div>
+
+    <!-- Staging + Validate -->
+    <div class="bottom-row">
+      <div class="node node-stage">Staging</div>
+      <span style="color: rgba(68,255,136,0.3); font-size: 18px;">&rarr;</span>
+      <div class="node node-stage">Validate</div>
+      <span style="color: rgba(255,215,0,0.3); font-size: 18px;">&rarr;</span>
+      <div class="node node-brain">Brain</div>
+    </div>
+  </div>
+
+  <!-- Event Queue -->
+  <div class="event-queue">
+    <div class="eq-title">Event Queue</div>
+    <div class="eq-item"><span class="eq-dot"></span>tool_use:Read</div>
+    <div class="eq-item"><span class="eq-dot"></span>tool_use:Write</div>
+    <div class="eq-item"><span class="eq-dot"></span>tool_use:Bash</div>
+    <div class="eq-item"><span class="eq-dot"></span>entity:detected</div>
+    <div class="eq-item"><span class="eq-dot"></span>pattern:learned</div>
+    <div class="eq-item"><span class="eq-dot"></span>brain:update</div>
+    <div class="eq-item"><span class="eq-dot"></span>session:summary</div>
+  </div>
+  <div class="feed-line"></div>
+  <div class="feed-arrow">&larr;</div>
+
+  <div class="version">v3.0.2</div>
+  <div class="branding">BIZBRAIN OS</div>
+</div>
+</body>
+</html>

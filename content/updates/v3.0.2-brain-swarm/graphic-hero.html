@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>Brain Swarm - BizBrain OS v3.0.2 Hero</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px;
+    height: 630px;
+    background: #0a0a0f;
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    overflow: hidden;
+    position: relative;
+  }
+  .container {
+    width: 1200px;
+    height: 630px;
+    display: flex;
+    position: relative;
+  }
+  /* Global background glow */
+  .bg-glow {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 55% 45%, rgba(255, 215, 0, 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 30% 60%, rgba(0, 212, 255, 0.04) 0%, transparent 35%),
+      radial-gradient(circle at 75% 35%, rgba(0, 212, 255, 0.04) 0%, transparent 35%);
+    pointer-events: none;
+  }
+  /* Grid overlay */
+  .grid-overlay {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0, 212, 255, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 255, 0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+  /* Left side: text content */
+  .text-side {
+    width: 520px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 0 0 60px;
+    position: relative;
+    z-index: 2;
+  }
+  .version-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    padding: 5px 14px;
+    border-radius: 16px;
+    background: rgba(0, 212, 255, 0.06);
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    font-size: 11px;
+    color: #00D4FF;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero-title {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 16px;
+  }
+  .hero-title .word-brain { color: #ffffff; }
+  .hero-title .word-swarm { color: #FFD700; }
+  .hero-subtitle {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.5;
+    margin-bottom: 32px;
+    max-width: 420px;
+  }
+  .hero-subtitle em {
+    color: #00D4FF;
+    font-style: normal;
+    font-weight: 600;
+  }
+  .tagline {
+    font-size: 13px;
+    color: rgba(255, 215, 0, 0.5);
+    letter-spacing: 1px;
+    font-style: italic;
+  }
+  /* Right side: node visualization */
+  .visual-side {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Node base */
+  .node {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  /* Orchestrator (center) */
+  .node-orchestrator {
+    width: 110px;
+    height: 110px;
+    background: rgba(255, 215, 0, 0.08);
+    border: 2.5px solid rgba(255, 215, 0, 0.4);
+    color: #FFD700;
+    font-size: 11px;
+    box-shadow:
+      0 0 40px rgba(255, 215, 0, 0.12),
+      0 0 80px rgba(255, 215, 0, 0.06);
+    z-index: 3;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  /* Inner ring pulse */
+  .node-orchestrator::before {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 215, 0, 0.1);
+  }
+  .node-orchestrator::after {
+    content: '';
+    position: absolute;
+    inset: -26px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 215, 0, 0.05);
+  }
+  /* Agent nodes (cyan) */
+  .node-agent {
+    width: 72px;
+    height: 72px;
+    background: rgba(0, 212, 255, 0.06);
+    border: 1.5px solid rgba(0, 212, 255, 0.3);
+    color: #00D4FF;
+    font-size: 8px;
+    z-index: 2;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.08);
+  }
+  /* Positions for 6 agent nodes around center */
+  .agent-1 { left: 50%; top: 8%; transform: translate(-50%, 0); }
+  .agent-2 { right: 8%; top: 25%; }
+  .agent-3 { right: 8%; bottom: 25%; }
+  .agent-4 { left: 50%; bottom: 8%; transform: translate(-50%, 0); }
+  .agent-5 { left: 12%; bottom: 25%; }
+  .agent-6 { left: 12%; top: 25%; }
+  /* Smaller satellite nodes */
+  .node-small {
+    width: 28px;
+    height: 28px;
+    background: rgba(0, 212, 255, 0.03);
+    border: 1px solid rgba(0, 212, 255, 0.12);
+    z-index: 1;
+  }
+  .small-1 { left: 28%; top: 10%; }
+  .small-2 { right: 18%; top: 10%; }
+  .small-3 { right: 3%; top: 48%; }
+  .small-4 { right: 18%; bottom: 8%; }
+  .small-5 { left: 28%; bottom: 8%; }
+  .small-6 { left: 3%; top: 48%; }
+  .small-7 { left: 38%; top: 22%; }
+  .small-8 { right: 28%; top: 22%; }
+  /* Connection lines */
+  .connection {
+    position: absolute;
+    z-index: 0;
+    transform-origin: 0 0;
+  }
+  .line {
+    position: absolute;
+    height: 1px;
+    transform-origin: 0 0;
+  }
+  .line-gold { background: rgba(255, 215, 0, 0.12); }
+  .line-cyan { background: rgba(0, 212, 255, 0.08); }
+  /* We'll use a simpler connection approach with borders */
+  .orbit-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 212, 255, 0.06);
+    left: 50%;
+    top: 50%;
+  }
+  .orbit-1 {
+    width: 220px;
+    height: 220px;
+    transform: translate(-50%, -50%);
+  }
+  .orbit-2 {
+    width: 340px;
+    height: 340px;
+    transform: translate(-50%, -50%);
+    border-style: dashed;
+    border-color: rgba(0, 212, 255, 0.04);
+  }
+  /* Branding */
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 60px;
+    z-index: 5;
+  }
+  .brand-left {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: rgba(255, 255, 255, 0.15);
+    text-transform: uppercase;
+  }
+  .brand-right {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.12);
+    letter-spacing: 1px;
+  }
+  /* Decorative line separators from center to agents */
+  .radial-line {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 1px;
+    width: 90px;
+    transform-origin: 0 0;
+    z-index: 1;
+  }
+  .rl-gold { background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), rgba(0, 212, 255, 0.15)); }
+  .rl-1 { transform: rotate(-90deg); }
+  .rl-2 { transform: rotate(-30deg); }
+  .rl-3 { transform: rotate(30deg); }
+  .rl-4 { transform: rotate(90deg); }
+  .rl-5 { transform: rotate(150deg); }
+  .rl-6 { transform: rotate(210deg); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="bg-glow"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- Left: Text -->
+  <div class="text-side">
+    <div class="version-pill">BizBrain OS v3.0.2</div>
+    <div class="hero-title">
+      <span class="word-brain">Brain</span><br>
+      <span class="word-swarm">Swarm</span>
+    </div>
+    <div class="hero-subtitle">
+      Stop hoping AI remembers.<br>
+      Start <em>orchestrating</em> it.
+    </div>
+    <div class="tagline">"The compound interest of AI context."</div>
+  </div>
+
+  <!-- Right: Node visualization -->
+  <div class="visual-side">
+    <!-- Orbit rings -->
+    <div class="orbit-ring orbit-1"></div>
+    <div class="orbit-ring orbit-2"></div>
+
+    <!-- Radial lines from center -->
+    <div class="radial-line rl-gold rl-1"></div>
+    <div class="radial-line rl-gold rl-2"></div>
+    <div class="radial-line rl-gold rl-3"></div>
+    <div class="radial-line rl-gold rl-4"></div>
+    <div class="radial-line rl-gold rl-5"></div>
+    <div class="radial-line rl-gold rl-6"></div>
+
+    <!-- Central orchestrator -->
+    <div class="node node-orchestrator">ORCH</div>
+
+    <!-- Agent nodes -->
+    <div class="node node-agent agent-1">Watchdog</div>
+    <div class="node node-agent agent-2">Learner</div>
+    <div class="node node-agent agent-3">Gateway</div>
+    <div class="node node-agent agent-4">Staging</div>
+    <div class="node node-agent agent-5">Queue</div>
+    <div class="node node-agent agent-6">Changelog</div>
+
+    <!-- Smaller satellite nodes -->
+    <div class="node node-small small-1"></div>
+    <div class="node node-small small-2"></div>
+    <div class="node node-small small-3"></div>
+    <div class="node node-small small-4"></div>
+    <div class="node node-small small-5"></div>
+    <div class="node node-small small-6"></div>
+    <div class="node node-small small-7"></div>
+    <div class="node node-small small-8"></div>
+  </div>
+
+  <!-- Bottom branding -->
+  <div class="bottom-bar">
+    <div class="brand-left">BizBrain OS</div>
+    <div class="brand-right">Claude Code Plugin &bull; Local-First &bull; $0/month</div>
+  </div>
+</div>
+</body>
+</html>
