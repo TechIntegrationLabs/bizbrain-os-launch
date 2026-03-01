@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200, height=630">
+<title>Cost Comparison — Otter.ai vs BizBrain OS</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px; height: 630px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #e2e8f0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .header {
+    font-size: 32px; font-weight: 700; margin-bottom: 8px;
+    color: #f1f5f9;
+  }
+  .subheader {
+    font-size: 16px; color: #94a3b8; margin-bottom: 40px;
+  }
+  .cards {
+    display: flex; gap: 40px;
+  }
+  .card {
+    width: 440px; border-radius: 16px; padding: 32px;
+    position: relative;
+  }
+  .card.otter {
+    background: rgba(239, 68, 68, 0.08);
+    border: 2px solid rgba(239, 68, 68, 0.3);
+  }
+  .card.bizbrain {
+    background: rgba(34, 197, 94, 0.08);
+    border: 2px solid rgba(34, 197, 94, 0.3);
+  }
+  .card-title {
+    font-size: 22px; font-weight: 700; margin-bottom: 4px;
+  }
+  .card.otter .card-title { color: #fca5a5; }
+  .card.bizbrain .card-title { color: #86efac; }
+  .card-price {
+    font-size: 48px; font-weight: 800; margin: 12px 0 20px;
+  }
+  .card.otter .card-price { color: #ef4444; }
+  .card.bizbrain .card-price { color: #22c55e; }
+  .card-price span { font-size: 18px; font-weight: 400; color: #94a3b8; }
+  .feature-list { list-style: none; }
+  .feature-list li {
+    padding: 8px 0; font-size: 15px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    display: flex; justify-content: space-between;
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-list .label { color: #94a3b8; }
+  .feature-list .value { font-weight: 600; }
+  .card.otter .value { color: #fca5a5; }
+  .card.bizbrain .value { color: #86efac; }
+  .badge {
+    position: absolute; top: -12px; right: 20px;
+    background: #22c55e; color: #052e16;
+    font-size: 12px; font-weight: 700;
+    padding: 4px 12px; border-radius: 12px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .footer {
+    position: absolute; bottom: 20px;
+    font-size: 13px; color: #475569;
+  }
+</style>
+</head>
+<body>
+  <div class="header">Meeting Transcription</div>
+  <div class="subheader">Why pay for the cloud when you can run it locally?</div>
+  <div class="cards">
+    <div class="card otter">
+      <div class="card-title">Otter.ai</div>
+      <div class="card-price">$20<span>/user/month</span></div>
+      <ul class="feature-list">
+        <li><span class="label">Processing</span><span class="value">Cloud</span></li>
+        <li><span class="label">Platforms</span><span class="value">Zoom, Meet, Teams</span></li>
+        <li><span class="label">Privacy</span><span class="value">Their servers</span></li>
+        <li><span class="label">Integration</span><span class="value">Standalone</span></li>
+        <li><span class="label">Entity linking</span><span class="value">No</span></li>
+        <li><span class="label">Action items</span><span class="value">Basic</span></li>
+      </ul>
+    </div>
+    <div class="card bizbrain">
+      <div class="badge">Free forever</div>
+      <div class="card-title">BizBrain OS</div>
+      <div class="card-price">$0<span>/month</span></div>
+      <ul class="feature-list">
+        <li><span class="label">Processing</span><span class="value">100% Local</span></li>
+        <li><span class="label">Platforms</span><span class="value">Any audio source</span></li>
+        <li><span class="label">Privacy</span><span class="value">Your machine only</span></li>
+        <li><span class="label">Integration</span><span class="value">Brain-native</span></li>
+        <li><span class="label">Entity linking</span><span class="value">Automatic</span></li>
+        <li><span class="label">Action items</span><span class="value">Brain-extracted</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer">BizBrain OS v3.0.1 — Local-First Free Alternative</div>
+</body>
+</html>

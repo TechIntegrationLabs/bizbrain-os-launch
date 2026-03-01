@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200, height=630">
+<title>Before/After — Meeting Workflow</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px; height: 630px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #e2e8f0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .header {
+    font-size: 32px; font-weight: 700; margin-bottom: 8px; color: #f1f5f9;
+  }
+  .subheader {
+    font-size: 16px; color: #94a3b8; margin-bottom: 36px;
+  }
+  .columns {
+    display: flex; gap: 40px;
+  }
+  .column {
+    width: 480px; border-radius: 16px; padding: 28px;
+  }
+  .column.before {
+    background: rgba(239, 68, 68, 0.06);
+    border: 2px solid rgba(239, 68, 68, 0.2);
+  }
+  .column.after {
+    background: rgba(34, 197, 94, 0.06);
+    border: 2px solid rgba(34, 197, 94, 0.2);
+  }
+  .col-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .col-title { font-size: 22px; font-weight: 700; }
+  .before .col-title { color: #fca5a5; }
+  .after .col-title { color: #86efac; }
+  .step-count {
+    font-size: 36px; font-weight: 800;
+  }
+  .before .step-count { color: #ef4444; }
+  .after .step-count { color: #22c55e; }
+  .step-count span { font-size: 14px; font-weight: 400; color: #94a3b8; }
+  .steps { list-style: none; }
+  .steps li {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+    font-size: 15px;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+  }
+  .before .step-num {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+  }
+  .after .step-num {
+    background: rgba(34, 197, 94, 0.15);
+    color: #86efac;
+  }
+  .step-label { color: #cbd5e1; }
+  .step-note { font-size: 11px; color: #64748b; margin-left: auto; }
+  .footer {
+    position: absolute; bottom: 20px;
+    font-size: 13px; color: #475569;
+  }
+</style>
+</head>
+<body>
+  <div class="header">Meeting Workflow</div>
+  <div class="subheader">6 manual steps reduced to 2 automated steps</div>
+  <div class="columns">
+    <div class="column before">
+      <div class="col-header">
+        <div class="col-title">Before</div>
+        <div class="step-count">6 <span>manual steps</span></div>
+      </div>
+      <ul class="steps">
+        <li>
+          <div class="step-num">1</div>
+          <span class="step-label">Join meeting + start Otter bot</span>
+          <span class="step-note">manual</span>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <span class="step-label">Wait for Otter to process transcript</span>
+          <span class="step-note">5-10 min</span>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <span class="step-label">Read through the transcript</span>
+          <span class="step-note">manual</span>
+        </li>
+        <li>
+          <div class="step-num">4</div>
+          <span class="step-label">Copy action items to todo app</span>
+          <span class="step-note">manual</span>
+        </li>
+        <li>
+          <div class="step-num">5</div>
+          <span class="step-label">Update client/project records</span>
+          <span class="step-note">manual</span>
+        </li>
+        <li>
+          <div class="step-num">6</div>
+          <span class="step-label">File the transcript somewhere</span>
+          <span class="step-note">manual</span>
+        </li>
+      </ul>
+    </div>
+    <div class="column after">
+      <div class="col-header">
+        <div class="col-title">After</div>
+        <div class="step-count">2 <span>automated steps</span></div>
+      </div>
+      <ul class="steps">
+        <li>
+          <div class="step-num">1</div>
+          <span class="step-label">/meetings start</span>
+          <span class="step-note">one-time</span>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <span class="step-label">Have your meeting</span>
+          <span class="step-note">that's it</span>
+        </li>
+      </ul>
+      <div style="margin-top: 20px; padding: 16px; background: rgba(34, 197, 94, 0.08); border-radius: 10px; border: 1px solid rgba(34, 197, 94, 0.15);">
+        <div style="font-size: 13px; color: #86efac; font-weight: 600; margin-bottom: 8px;">Brain handles automatically:</div>
+        <div style="font-size: 12px; color: #94a3b8; line-height: 1.6;">
+          Recording → Transcription → Entity linking<br>
+          Action item extraction → Project updates<br>
+          Transcript filing → Intake processing
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">BizBrain OS v3.0.1 — Local-First Free Alternative</div>
+</body>
+</html>
