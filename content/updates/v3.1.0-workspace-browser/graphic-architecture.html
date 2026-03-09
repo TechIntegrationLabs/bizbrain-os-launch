@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture — BizBrain OS v3.1.0</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .card {
+    width: 1200px;
+    height: 630px;
+    background: linear-gradient(145deg, #161b22, #0d1117);
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 44px 56px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    bottom: -80px;
+    left: -80px;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #f0f6fc;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .flows {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    flex: 1;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+  }
+  .flow-node {
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 1px solid;
+    text-align: center;
+    min-width: 130px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .flow-node-icon {
+    font-size: 22px;
+    margin-bottom: 2px;
+  }
+  .flow-node h4 {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .flow-node p {
+    font-size: 11px;
+    color: #8b949e;
+    line-height: 1.3;
+  }
+  /* Source nodes */
+  .node-google {
+    background: rgba(210,153,34,0.08);
+    border-color: rgba(210,153,34,0.3);
+  }
+  .node-google h4 { color: #d29922; }
+  .node-web {
+    background: rgba(139,92,246,0.08);
+    border-color: rgba(139,92,246,0.3);
+  }
+  .node-web h4 { color: #a371f7; }
+  /* Tool nodes */
+  .node-tool {
+    background: rgba(56,189,248,0.08);
+    border-color: rgba(56,189,248,0.3);
+  }
+  .node-tool h4 { color: #58a6ff; }
+  /* Brain node */
+  .node-brain {
+    background: rgba(63,185,80,0.1);
+    border-color: rgba(63,185,80,0.35);
+    min-width: 110px;
+  }
+  .node-brain h4 { color: #3fb950; font-size: 15px; }
+  /* Output nodes */
+  .node-output {
+    background: rgba(139,148,158,0.06);
+    border-color: rgba(139,148,158,0.2);
+  }
+  .node-output h4 { color: #c9d1d9; }
+  .arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+  .arrow-line {
+    width: 36px;
+    height: 2px;
+    position: relative;
+  }
+  .arrow-line::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -4px;
+    border: 5px solid transparent;
+  }
+  .arrow-gw .arrow-line {
+    background: linear-gradient(90deg, rgba(210,153,34,0.6), rgba(56,189,248,0.6));
+  }
+  .arrow-gw .arrow-line::after { border-left-color: rgba(56,189,248,0.6); }
+  .arrow-tool .arrow-line {
+    background: linear-gradient(90deg, rgba(56,189,248,0.6), rgba(63,185,80,0.6));
+  }
+  .arrow-tool .arrow-line::after { border-left-color: rgba(63,185,80,0.6); }
+  .arrow-brain .arrow-line {
+    background: linear-gradient(90deg, rgba(63,185,80,0.6), rgba(139,148,158,0.4));
+  }
+  .arrow-brain .arrow-line::after { border-left-color: rgba(139,148,158,0.4); }
+  .arrow-web .arrow-line {
+    background: linear-gradient(90deg, rgba(139,92,246,0.6), rgba(56,189,248,0.6));
+  }
+  .arrow-web .arrow-line::after { border-left-color: rgba(56,189,248,0.6); }
+  .outputs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .brain-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .brain-glow {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(63,185,80,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .row-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #6e7681;
+    width: 60px;
+    text-align: right;
+    margin-right: 16px;
+    flex-shrink: 0;
+  }
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 16px;
+    margin-top: 8px;
+    border-top: 1px solid #21262d;
+  }
+  .footer-text {
+    font-size: 13px;
+    color: #6e7681;
+  }
+  .footer-brand {
+    font-size: 14px;
+    font-weight: 600;
+    color: #58a6ff;
+  }
+  .tool-group {
+    display: flex;
+    gap: 8px;
+  }
+  .tool-group .flow-node {
+    min-width: 100px;
+    padding: 10px 12px;
+  }
+  .output-group {
+    display: flex;
+    gap: 8px;
+  }
+  .output-group .flow-node {
+    min-width: 90px;
+    padding: 10px 12px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="title">Workspace &amp; Browser Intelligence Architecture</div>
+
+  <div class="flows">
+    <!-- Row 1: Google Workspace flow -->
+    <div class="flow-row">
+      <div class="row-label">Workspace</div>
+      <div class="flow-node node-google" style="min-width:150px;">
+        <div class="flow-node-icon">&#9993;</div>
+        <h4>Google Workspace</h4>
+        <p>Gmail, Calendar, Drive</p>
+      </div>
+      <div class="arrow arrow-gw"><div class="arrow-line"></div></div>
+      <div class="tool-group">
+        <div class="flow-node node-tool">
+          <h4>gwcli</h4>
+          <p>CLI (0 tokens)</p>
+        </div>
+        <div class="flow-node node-tool">
+          <h4>Google MCP</h4>
+          <p>12 services</p>
+        </div>
+      </div>
+      <div class="arrow arrow-tool"><div class="arrow-line"></div></div>
+      <div class="flow-node node-brain" style="position:relative;">
+        <div class="brain-glow"></div>
+        <div class="flow-node-icon">&#129504;</div>
+        <h4>Brain</h4>
+      </div>
+      <div class="arrow arrow-brain"><div class="arrow-line"></div></div>
+      <div class="output-group">
+        <div class="flow-node node-output">
+          <h4>Entities</h4>
+          <p>Auto-link</p>
+        </div>
+        <div class="flow-node node-output">
+          <h4>Intake</h4>
+          <p>Process</p>
+        </div>
+        <div class="flow-node node-output">
+          <h4>Todos</h4>
+          <p>Extract</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Web / Browser flow -->
+    <div class="flow-row">
+      <div class="row-label">Browser</div>
+      <div class="flow-node node-web" style="min-width:150px;">
+        <div class="flow-node-icon">&#127760;</div>
+        <h4>Web</h4>
+        <p>Sites, Apps, Testing</p>
+      </div>
+      <div class="arrow arrow-web"><div class="arrow-line"></div></div>
+      <div class="tool-group">
+        <div class="flow-node node-tool">
+          <h4>Playwright</h4>
+          <p>Default</p>
+        </div>
+        <div class="flow-node node-tool">
+          <h4>Chrome</h4>
+          <p>Auth</p>
+        </div>
+        <div class="flow-node node-tool">
+          <h4>Puppeteer</h4>
+          <p>Fallback</p>
+        </div>
+      </div>
+      <div class="arrow arrow-tool"><div class="arrow-line"></div></div>
+      <div class="flow-node node-brain" style="position:relative;">
+        <div class="brain-glow"></div>
+        <div class="flow-node-icon">&#129504;</div>
+        <h4>Brain</h4>
+      </div>
+      <div class="arrow arrow-brain"><div class="arrow-line"></div></div>
+      <div class="output-group">
+        <div class="flow-node node-output">
+          <h4>Projects</h4>
+          <p>QA</p>
+        </div>
+        <div class="flow-node node-output">
+          <h4>Research</h4>
+          <p>Capture</p>
+        </div>
+        <div class="flow-node node-output">
+          <h4>Docs</h4>
+          <p>Archive</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="footer-text">Zero permanent context cost — tools loaded on demand</span>
+    <span class="footer-brand">BizBrain OS v3.1.0</span>
+  </div>
+</div>
+</body>
+</html>

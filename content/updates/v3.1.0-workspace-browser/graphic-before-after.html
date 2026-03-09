@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Before vs After — BizBrain OS v3.1.0</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .card {
+    width: 1200px;
+    height: 630px;
+    background: linear-gradient(145deg, #161b22, #0d1117);
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 48px 56px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #f0f6fc;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    font-size: 15px;
+    color: #8b949e;
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .columns {
+    display: flex;
+    gap: 28px;
+    flex: 1;
+  }
+  .column {
+    flex: 1;
+    border-radius: 14px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .column-before {
+    background: rgba(248,81,73,0.05);
+    border: 1px solid rgba(248,81,73,0.2);
+  }
+  .column-after {
+    background: rgba(63,185,80,0.05);
+    border: 1px solid rgba(63,185,80,0.2);
+  }
+  .column-header {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid;
+  }
+  .column-before .column-header {
+    color: #f85149;
+    border-color: rgba(248,81,73,0.2);
+  }
+  .column-after .column-header {
+    color: #3fb950;
+    border-color: rgba(63,185,80,0.2);
+  }
+  .items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+  }
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .item-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .column-before .item-icon {
+    background: rgba(248,81,73,0.12);
+    color: #f85149;
+  }
+  .column-after .item-icon {
+    background: rgba(63,185,80,0.12);
+    color: #3fb950;
+  }
+  .item-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #c9d1d9;
+  }
+  .item-text strong {
+    color: #f0f6fc;
+    font-weight: 600;
+  }
+  .divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .divider::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, #30363d, transparent);
+  }
+  .divider-arrow {
+    width: 36px;
+    height: 36px;
+    background: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #58a6ff;
+    position: relative;
+    z-index: 1;
+  }
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
+    margin-top: 16px;
+    border-top: 1px solid #21262d;
+  }
+  .footer-text {
+    font-size: 13px;
+    color: #6e7681;
+  }
+  .footer-brand {
+    font-size: 14px;
+    font-weight: 600;
+    color: #58a6ff;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="title">Before vs After BizBrain OS v3.1.0</div>
+  <div class="subtitle">From manual workflows to intelligent automation</div>
+
+  <div class="columns">
+    <div class="column column-before">
+      <div class="column-header">Before</div>
+      <div class="items">
+        <div class="item">
+          <div class="item-icon">&#10007;</div>
+          <div class="item-text"><strong>Copy-paste emails</strong> into Claude manually every time</div>
+        </div>
+        <div class="item">
+          <div class="item-icon">&#10007;</div>
+          <div class="item-text"><strong>Can't check your calendar</strong> — scheduling is a blind spot</div>
+        </div>
+        <div class="item">
+          <div class="item-icon">&#10007;</div>
+          <div class="item-text"><strong>Manual browser testing</strong> — click through everything yourself</div>
+        </div>
+        <div class="item">
+          <div class="item-icon">&#10007;</div>
+          <div class="item-text"><strong>Re-explain context</strong> every session from scratch</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">
+      <div class="divider-arrow">&#10132;</div>
+    </div>
+
+    <div class="column column-after">
+      <div class="column-header">After</div>
+      <div class="items">
+        <div class="item">
+          <div class="item-icon">&#10003;</div>
+          <div class="item-text"><strong>Claude reads your Gmail</strong> directly via gwcli + MCP</div>
+        </div>
+        <div class="item">
+          <div class="item-icon">&#10003;</div>
+          <div class="item-text"><strong>Calendar events linked</strong> to entities automatically</div>
+        </div>
+        <div class="item">
+          <div class="item-icon">&#10003;</div>
+          <div class="item-text"><strong>Playwright automates</strong> browsers cross-platform, headless</div>
+        </div>
+        <div class="item">
+          <div class="item-icon">&#10003;</div>
+          <div class="item-text"><strong>Brain remembers everything</strong> — context compounds over time</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="footer-text">Workspace &amp; Browser Intelligence</span>
+    <span class="footer-brand">BizBrain OS v3.1.0</span>
+  </div>
+</div>
+</body>
+</html>
