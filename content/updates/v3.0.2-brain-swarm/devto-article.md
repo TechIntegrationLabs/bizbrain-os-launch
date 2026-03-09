@@ -3,7 +3,7 @@ title: "My 3 AI Brain Agents Were Working Alone. Now They Have a Conductor."
 published: false
 description: "BizBrain OS v3.0.2 adds Brain Swarm — an orchestration layer that coordinates independent brain agents with an event queue, staging validation, conflict detection, changelog audit trail, and smart model routing. Here's the architecture."
 tags: claudecode, ai, opensource, architecture
-cover_image: # TODO: Add cover image URL
+cover_image: https://raw.githubusercontent.com/TechIntegrationLabs/bizbrain-os-plugin/main/assets/bizbrain-architecture-demo.jpg
 ---
 
 Every AI session, my 3 brain agents were working alone. Now they have a conductor.
